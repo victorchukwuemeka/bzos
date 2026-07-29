@@ -1,6 +1,7 @@
-use rusqlite::{Connection, Result, params};
 use crate::models::*;
-use std::path::Path;
+use chrono::Utc;
+use rusqlite::{params, Connection, Result};
+use uuid::Uuid;
 
 pub struct Database {
     conn: Connection,
@@ -13,18 +14,28 @@ impl Database {
 
     pub fn new(db_path: &str) -> Result<Self> {
         let conn = Connection::open(db_path)?;
-        
-        // Enable WAL mode for better performance
+
         conn.execute_batch("PRAGMA journal_mode=WAL;")?;
         conn.execute_batch("PRAGMA foreign_keys=ON;")?;
-        
+
         let db = Self { conn };
         db.run_migrations()?;
+        db.seed_default_user()?;
         Ok(db)
     }
 
     fn run_migrations(&self) -> Result<()> {
-        self.conn.execute_batch(include_str!("../migrations/001_create_tables.sql"))
+        self.conn
+            .execute_batch(include_str!("../migrations/001_create_tables.sql"))
+    }
+
+    fn seed_default_user(&self) -> Result<()> {
+        self.conn.execute(
+            "INSERT OR IGNORE INTO users (id, email, password_hash, full_name, created_at, updated_at)
+             VALUES ('user-1', 'demo@victor.app', 'demo', 'Demo User', datetime('now'), datetime('now'))",
+            [],
+        )?;
+        Ok(())
     }
 
     // ============================================================
@@ -532,7 +543,14 @@ impl Database {
     // SYNC QUEUE
     // ============================================================
 
-    pub fn add_to_sync_queue(&self, user_id: &str, entity_type: &str, entity_id: &str, action: &str, payload: &str) -> Result<()> {
+    pub fn add_to_sync_queue(
+        &self,
+        user_id: &str,
+        entity_type: &str,
+        entity_id: &str,
+        action: &str,
+        payload: &str,
+    ) -> Result<()> {
         self.conn.execute(
             "INSERT INTO sync_queue (id, user_id, entity_type, entity_id, action, payload, created_at)
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
@@ -552,7 +570,7 @@ impl Database {
     pub fn get_pending_sync_items(&self, user_id: &str) -> Result<Vec<SyncQueue>> {
         let mut stmt = self.conn.prepare(
             "SELECT id, user_id, entity_type, entity_id, action, payload, created_at, synced_at
-             FROM sync_queue WHERE user_id = ?1 AND synced_at IS NULL ORDER BY created_at ASC"
+             FROM sync_queue WHERE user_id = ?1 AND synced_at IS NULL ORDER BY created_at ASC",
         )?;
 
         let rows = stmt.query_map(params![user_id], |row| {

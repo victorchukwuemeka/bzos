@@ -1,5 +1,5 @@
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 // ============================================================
@@ -23,7 +23,9 @@ pub struct CreateUser {
     pub email: String,
     pub password: String,
     pub full_name: String,
+    #[serde(default)]
     pub business_name: Option<String>,
+    #[serde(default)]
     pub phone: Option<String>,
 }
 
@@ -58,24 +60,39 @@ pub struct Customer {
 #[derive(Debug, Deserialize)]
 pub struct CreateCustomer {
     pub name: String,
+    #[serde(default)]
     pub phone: Option<String>,
+    #[serde(default)]
     pub email: Option<String>,
+    #[serde(default)]
     pub notes: Option<String>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub budget_min: Option<f64>,
+    #[serde(default)]
     pub budget_max: Option<f64>,
+    #[serde(default)]
     pub source: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCustomer {
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub phone: Option<String>,
+    #[serde(default)]
     pub email: Option<String>,
+    #[serde(default)]
     pub notes: Option<String>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub budget_min: Option<f64>,
+    #[serde(default)]
     pub budget_max: Option<f64>,
+    #[serde(default)]
     pub source: Option<String>,
 }
 
@@ -102,23 +119,36 @@ pub struct Deal {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateDeal {
-    pub customer_id: Option<String>,
     pub title: String,
+    #[serde(default)]
+    pub customer_id: Option<String>,
+    #[serde(default)]
     pub value: Option<f64>,
+    #[serde(default)]
     pub currency: Option<String>,
+    #[serde(default)]
     pub status: Option<String>,
+    #[serde(default)]
     pub expected_close_date: Option<String>,
+    #[serde(default)]
     pub notes: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateDeal {
+    #[serde(default)]
     pub customer_id: Option<String>,
+    #[serde(default)]
     pub title: Option<String>,
+    #[serde(default)]
     pub value: Option<f64>,
+    #[serde(default)]
     pub currency: Option<String>,
+    #[serde(default)]
     pub status: Option<String>,
+    #[serde(default)]
     pub expected_close_date: Option<String>,
+    #[serde(default)]
     pub notes: Option<String>,
 }
 
@@ -145,21 +175,32 @@ pub struct FollowUp {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateFollowUp {
-    pub customer_id: Option<String>,
-    pub deal_id: Option<String>,
-    pub r#type: Option<String>,
     pub scheduled_at: String,
+    #[serde(default)]
+    pub customer_id: Option<String>,
+    #[serde(default)]
+    pub deal_id: Option<String>,
+    #[serde(default)]
+    pub r#type: Option<String>,
+    #[serde(default)]
     pub notes: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateFollowUp {
+    #[serde(default)]
     pub customer_id: Option<String>,
+    #[serde(default)]
     pub deal_id: Option<String>,
+    #[serde(default)]
     pub r#type: Option<String>,
+    #[serde(default)]
     pub scheduled_at: Option<String>,
+    #[serde(default)]
     pub completed_at: Option<String>,
+    #[serde(default)]
     pub notes: Option<String>,
+    #[serde(default)]
     pub status: Option<String>,
 }
 
@@ -190,30 +231,49 @@ pub struct Transaction {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateTransaction {
-    pub customer_id: Option<String>,
-    pub deal_id: Option<String>,
     pub r#type: String,
     pub amount: f64,
+    #[serde(default)]
+    pub customer_id: Option<String>,
+    #[serde(default)]
+    pub deal_id: Option<String>,
+    #[serde(default)]
     pub currency: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub category: Option<String>,
+    #[serde(default)]
     pub payment_method: Option<String>,
+    #[serde(default)]
     pub is_credit: Option<bool>,
+    #[serde(default)]
     pub due_date: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateTransaction {
+    #[serde(default)]
     pub customer_id: Option<String>,
+    #[serde(default)]
     pub deal_id: Option<String>,
+    #[serde(default)]
     pub r#type: Option<String>,
+    #[serde(default)]
     pub amount: Option<f64>,
+    #[serde(default)]
     pub currency: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub category: Option<String>,
+    #[serde(default)]
     pub payment_method: Option<String>,
+    #[serde(default)]
     pub is_credit: Option<bool>,
+    #[serde(default)]
     pub due_date: Option<String>,
+    #[serde(default)]
     pub paid_at: Option<String>,
 }
 
