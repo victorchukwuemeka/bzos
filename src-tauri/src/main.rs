@@ -17,13 +17,12 @@ struct AppState {
 fn create_customer(
     state: tauri::State<'_, AppState>,
     customer: CreateCustomer,
-    user_id: String,
 ) -> Result<Customer, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
 
     let new_customer = Customer {
         id: uuid::Uuid::new_v4().to_string(),
-        user_id,
+        user_id: "user-1".to_string(),
         name: customer.name,
         phone: customer.phone,
         email: customer.email,
@@ -48,10 +47,9 @@ fn create_customer(
 #[tauri::command]
 fn get_customers(
     state: tauri::State<'_, AppState>,
-    user_id: String,
 ) -> Result<Vec<Customer>, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
-    db.get_customers(&user_id).map_err(|e| e.to_string())
+    db.get_customers("user-1").map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -64,13 +62,12 @@ fn get_customer(state: tauri::State<'_, AppState>, id: String) -> Result<Option<
 fn create_deal(
     state: tauri::State<'_, AppState>,
     deal: CreateDeal,
-    user_id: String,
 ) -> Result<Deal, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
 
     let new_deal = Deal {
         id: uuid::Uuid::new_v4().to_string(),
-        user_id,
+        user_id: "user-1".to_string(),
         customer_id: deal.customer_id,
         title: deal.title,
         value: deal.value,
@@ -89,22 +86,21 @@ fn create_deal(
 }
 
 #[tauri::command]
-fn get_deals(state: tauri::State<'_, AppState>, user_id: String) -> Result<Vec<Deal>, String> {
+fn get_deals(state: tauri::State<'_, AppState>) -> Result<Vec<Deal>, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
-    db.get_deals(&user_id).map_err(|e| e.to_string())
+    db.get_deals("user-1").map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn create_follow_up(
     state: tauri::State<'_, AppState>,
     follow_up: CreateFollowUp,
-    user_id: String,
 ) -> Result<FollowUp, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
 
     let new_follow_up = FollowUp {
         id: uuid::Uuid::new_v4().to_string(),
-        user_id,
+        user_id: "user-1".to_string(),
         customer_id: follow_up.customer_id,
         deal_id: follow_up.deal_id,
         r#type: follow_up.r#type,
@@ -126,19 +122,17 @@ fn create_follow_up(
 #[tauri::command]
 fn get_follow_ups(
     state: tauri::State<'_, AppState>,
-    user_id: String,
 ) -> Result<Vec<FollowUp>, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
-    db.get_follow_ups(&user_id).map_err(|e| e.to_string())
+    db.get_follow_ups("user-1").map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn get_today_follow_ups(
     state: tauri::State<'_, AppState>,
-    user_id: String,
 ) -> Result<Vec<FollowUp>, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
-    db.get_today_follow_ups(&user_id).map_err(|e| e.to_string())
+    db.get_today_follow_ups("user-1").map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -151,13 +145,12 @@ fn complete_follow_up(state: tauri::State<'_, AppState>, id: String) -> Result<(
 fn create_transaction(
     state: tauri::State<'_, AppState>,
     transaction: CreateTransaction,
-    user_id: String,
 ) -> Result<Transaction, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
 
     let new_transaction = Transaction {
         id: uuid::Uuid::new_v4().to_string(),
-        user_id,
+        user_id: "user-1".to_string(),
         customer_id: transaction.customer_id,
         deal_id: transaction.deal_id,
         r#type: transaction.r#type,
@@ -183,36 +176,33 @@ fn create_transaction(
 #[tauri::command]
 fn get_transactions(
     state: tauri::State<'_, AppState>,
-    user_id: String,
 ) -> Result<Vec<Transaction>, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
-    db.get_transactions(&user_id).map_err(|e| e.to_string())
+    db.get_transactions("user-1").map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn get_transactions_summary(
     state: tauri::State<'_, AppState>,
-    user_id: String,
 ) -> Result<(f64, f64, f64), String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
-    db.get_transactions_summary(&user_id)
+    db.get_transactions_summary("user-1")
         .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn get_dashboard_stats(
     state: tauri::State<'_, AppState>,
-    user_id: String,
 ) -> Result<serde_json::Value, String> {
     let db = state.db.lock().map_err(|e| e.to_string())?;
 
-    let customers = db.get_customers(&user_id).map_err(|e| e.to_string())?;
-    let deals = db.get_deals(&user_id).map_err(|e| e.to_string())?;
+    let customers = db.get_customers("user-1").map_err(|e| e.to_string())?;
+    let deals = db.get_deals("user-1").map_err(|e| e.to_string())?;
     let today_follow_ups = db
-        .get_today_follow_ups(&user_id)
+        .get_today_follow_ups("user-1")
         .map_err(|e| e.to_string())?;
     let (total_sales, total_expenses, profit) = db
-        .get_transactions_summary(&user_id)
+        .get_transactions_summary("user-1")
         .map_err(|e| e.to_string())?;
 
     let active_deals: Vec<&Deal> = deals

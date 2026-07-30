@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { invoke } from "@tauri-apps/api/core"
+import { getCustomers, createCustomer } from "../api"
 import type { Customer, CreateCustomer } from "../types"
-
-const USER_ID = "user-1"
 
 export default function Customers() {
   const [customers, setCustomers] = useState<Customer[]>([])
@@ -12,7 +10,7 @@ export default function Customers() {
   const [error, setError] = useState("")
 
   useEffect(() => {
-    invoke("get_customers", { userId: USER_ID })
+    getCustomers()
       .then((r) => setCustomers(r as Customer[]))
       .catch((e) => setError(String(e)))
   }, [])
@@ -22,10 +20,10 @@ export default function Customers() {
     setError("")
     if (!form.name.trim()) return
     try {
-      const testPayload = { userId: USER_ID }
-      setError("TEST: " + JSON.stringify(testPayload))
-      const result = await invoke("get_customers", testPayload)
-      setError("GOT: " + JSON.stringify(result).slice(0, 100))
+      const created = await createCustomer(form)
+      setCustomers([...customers, created as Customer])
+      setForm({ name: "" })
+      setShowForm(false)
     } catch (err) {
       setError(String(err))
     }

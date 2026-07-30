@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import { getTransactions, getTransactionsSummary, createTransaction } from "../api"
 import type { Transaction, CreateTransaction } from "../types"
 
-const USER_ID = "user-1"
-
 export default function Transactions() {
   const [items, setItems] = useState<Transaction[]>([])
   const [summary, setSummary] = useState<[number, number, number]>([0, 0, 0])
@@ -11,17 +9,17 @@ export default function Transactions() {
   const [form, setForm] = useState<CreateTransaction>({ type: "sale", amount: 0 })
 
   useEffect(() => {
-    getTransactions(USER_ID).then(setItems)
-    getTransactionsSummary(USER_ID).then(setSummary)
+    getTransactions().then(setItems)
+    getTransactionsSummary().then(setSummary)
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const t = await createTransaction(USER_ID, form)
+    const t = await createTransaction(form)
     setItems([...items, t])
     setForm({ type: "sale", amount: 0 })
     setShowForm(false)
-    getTransactionsSummary(USER_ID).then(setSummary)
+    getTransactionsSummary().then(setSummary)
   }
 
   return (

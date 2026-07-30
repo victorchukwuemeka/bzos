@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import { getFollowUps, completeFollowUp, createFollowUp } from "../api"
 import type { FollowUp, CreateFollowUp } from "../types"
 
-const USER_ID = "user-1"
-
 const typeIcons: Record<string, string> = {
   call: "📞",
   visit: "🤝",
@@ -16,7 +14,7 @@ export default function FollowUps() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState<CreateFollowUp>({ customer_id: "", type: "call", scheduled_at: "" })
 
-  useEffect(() => { getFollowUps(USER_ID).then(setItems) }, [])
+  useEffect(() => { getFollowUps().then(setItems) }, [])
 
   const handleComplete = async (id: string) => {
     await completeFollowUp(id)
@@ -25,7 +23,7 @@ export default function FollowUps() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const f = await createFollowUp(USER_ID, form)
+    const f = await createFollowUp(form)
     setItems([...items, f])
     setForm({ customer_id: "", type: "call", scheduled_at: "" })
     setShowForm(false)

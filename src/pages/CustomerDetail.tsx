@@ -3,8 +3,6 @@ import { useParams, Link } from "react-router-dom"
 import { getCustomer, getDeals, createDeal, getFollowUps, createFollowUp } from "../api"
 import type { Customer, Deal, FollowUp, CreateDeal, CreateFollowUp } from "../types"
 
-const USER_ID = "user-1"
-
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>()
   const [customer, setCustomer] = useState<Customer | null>(null)
@@ -18,15 +16,15 @@ export default function CustomerDetail() {
   useEffect(() => {
     if (!id) return
     getCustomer(id).then(setCustomer)
-    getDeals(USER_ID).then((d) => setDeals(d.filter((x) => x.customer_id === id)))
-    getFollowUps(USER_ID).then((f) => setFollowUps(f.filter((x) => x.customer_id === id)))
+    getDeals().then((d) => setDeals(d.filter((x) => x.customer_id === id)))
+    getFollowUps().then((f) => setFollowUps(f.filter((x) => x.customer_id === id)))
   }, [id])
 
   if (!customer) return <p className="text-slate-400 mt-8 text-center">Loading...</p>
 
   const handleDeal = async (e: React.FormEvent) => {
     e.preventDefault()
-    const d = await createDeal(USER_ID, { ...dealForm, customer_id: id! })
+    const d = await createDeal({ ...dealForm, customer_id: id! })
     setDeals([...deals, d])
     setDealForm({ customer_id: id!, title: "" })
     setShowDealForm(false)
@@ -34,7 +32,7 @@ export default function CustomerDetail() {
 
   const handleFUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    const f = await createFollowUp(USER_ID, { ...fupForm, customer_id: id! })
+    const f = await createFollowUp({ ...fupForm, customer_id: id! })
     setFollowUps([...followUps, f])
     setFupForm({ customer_id: id!, type: "call", scheduled_at: "" })
     setShowFUpForm(false)

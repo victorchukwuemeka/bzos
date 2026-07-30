@@ -2,14 +2,11 @@ import { useEffect, useState } from "react"
 import { getDashboardStats } from "../api"
 import type { DashboardStats } from "../types"
 
-const USER_ID = "user-1"
-const STORE = "user-1"
-
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
 
   useEffect(() => {
-    getDashboardStats(USER_ID).then(setStats)
+    getDashboardStats().then(setStats)
   }, [])
 
   const cards = [

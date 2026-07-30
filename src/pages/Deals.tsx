@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import { getDeals, createDeal } from "../api"
 import type { Deal, CreateDeal } from "../types"
 
-const USER_ID = "user-1"
-
 const stages = [
   { key: "lead", label: "Lead", color: "bg-blue-500" },
   { key: "negotiation", label: "Negotiation", color: "bg-amber-500" },
@@ -16,11 +14,11 @@ export default function Deals() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState<CreateDeal>({ customer_id: "", title: "" })
 
-  useEffect(() => { getDeals(USER_ID).then(setDeals) }, [])
+  useEffect(() => { getDeals().then(setDeals) }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const d = await createDeal(USER_ID, form)
+    const d = await createDeal(form)
     setDeals([...deals, d])
     setForm({ customer_id: "", title: "" })
     setShowForm(false)
