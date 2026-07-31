@@ -6,20 +6,28 @@ export default function Transactions() {
   const [items, setItems] = useState<Transaction[]>([])
   const [summary, setSummary] = useState<[number, number, number]>([0, 0, 0])
   const [showForm, setShowForm] = useState(false)
+  const [error, setError] = useState("")
   const [form, setForm] = useState<CreateTransaction>({ type: "sale", amount: 0 })
 
   useEffect(() => {
-    getTransactions().then(setItems)
-    getTransactionsSummary().then(setSummary)
+    getTransactions().then(setItems).catch((e) => setError(String(e)))
+    getTransactionsSummary().then(setSummary).catch((e) => setError(String(e)))
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const t = await createTransaction(form)
-    setItems([...items, t])
-    setForm({ type: "sale", amount: 0 })
-    setShowForm(false)
-    getTransactionsSummary().then(setSummary)
+    setError("")
+    if (!form.amount || form.amount <= 0) { setError("Amount must be greater than 0"); return }
+    try {
+      const clean = Object.fromEntries(Object.entries(form).filter(([, v]) => v !== "" && v !== undefined))
+      const t = await createTransaction(clean as CreateTransaction)
+      setItems([...items, t])
+      setForm({ type: "sale", amount: 0 })
+      setShowForm(false)
+      getTransactionsSummary().then(setSummary)
+    } catch (err) {
+      setError(String(err))
+    }
   }
 
   return (
@@ -35,6 +43,8 @@ export default function Transactions() {
       </div>
 
       <div className="h-5" />
+
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-4">{error}</div>}
 
       <div className="grid grid-cols-3 gap-5 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
@@ -79,10 +89,6 @@ export default function Transactions() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Payment Method</label>
               <input className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" value={form.payment_method ?? ""} onChange={(e) => setForm({ ...form, payment_method: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Customer ID</label>
-              <input className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" value={form.customer_id ?? ""} onChange={(e) => setForm({ ...form, customer_id: e.target.value })} />
             </div>
           </div>
           <button type="submit" className="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors">Record</button>

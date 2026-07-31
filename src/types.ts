@@ -29,7 +29,7 @@ export interface CreateCustomer {
 export interface Deal {
   id: string
   user_id: string
-  customer_id: string
+  customer_id: string | null
   title: string
   value: number | null
   currency: string
@@ -43,7 +43,7 @@ export interface Deal {
 }
 
 export interface CreateDeal {
-  customer_id: string
+  customer_id?: string
   title: string
   value?: number
   currency?: string
@@ -55,7 +55,7 @@ export interface CreateDeal {
 export interface FollowUp {
   id: string
   user_id: string
-  customer_id: string
+  customer_id: string | null
   deal_id: string | null
   type: string
   scheduled_at: string
@@ -69,7 +69,7 @@ export interface FollowUp {
 }
 
 export interface CreateFollowUp {
-  customer_id: string
+  customer_id?: string
   deal_id?: string
   type: string
   scheduled_at: string

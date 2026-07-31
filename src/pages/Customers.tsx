@@ -89,6 +89,7 @@ export default function Customers() {
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
               <th className="text-left px-5 py-3.5 font-semibold text-slate-700">Name</th>
+              <th className="text-left px-5 py-3.5 font-semibold text-slate-700">Customer ID</th>
               <th className="text-left px-5 py-3.5 font-semibold text-slate-700">Phone</th>
               <th className="text-left px-5 py-3.5 font-semibold text-slate-700">Email</th>
               <th className="text-left px-5 py-3.5 font-semibold text-slate-700">Source</th>
@@ -101,6 +102,10 @@ export default function Customers() {
                 <td className="px-5 py-3.5">
                   <Link to={`/customers/${c.id}`} className="text-brand-600 hover:text-brand-700 font-medium">{c.name}</Link>
                 </td>
+                <td className="px-5 py-3.5">
+                  <span className="font-mono text-xs text-slate-500">{c.id.slice(0, 8)}</span>
+                  <button onClick={() => navigator.clipboard.writeText(c.id)} title="Copy full ID" className="ml-2 text-xs text-slate-400 hover:text-brand-600 transition-colors">⧉</button>
+                </td>
                 <td className="px-5 py-3.5 text-slate-600">{c.phone || <span className="text-slate-400">-</span>}</td>
                 <td className="px-5 py-3.5 text-slate-600">{c.email || <span className="text-slate-400">-</span>}</td>
                 <td className="px-5 py-3.5 text-slate-600">{c.source || <span className="text-slate-400">-</span>}</td>
@@ -111,7 +116,7 @@ export default function Customers() {
               </tr>
             ))}
             {customers.length === 0 && (
-              <tr><td colSpan={5} className="px-5 py-12 text-center text-slate-400">No customers yet. Click "Add Customer" to get started.</td></tr>
+              <tr><td colSpan={6} className="px-5 py-12 text-center text-slate-400">No customers yet. Click "Add Customer" to get started.</td></tr>
             )}
           </tbody>
         </table>

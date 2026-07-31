@@ -12,7 +12,7 @@ const typeIcons: Record<string, string> = {
 export default function FollowUps() {
   const [items, setItems] = useState<FollowUp[]>([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState<CreateFollowUp>({ customer_id: "", type: "call", scheduled_at: "" })
+  const [form, setForm] = useState<CreateFollowUp>({ type: "call", scheduled_at: "" })
 
   useEffect(() => { getFollowUps().then(setItems) }, [])
 
@@ -23,9 +23,10 @@ export default function FollowUps() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const f = await createFollowUp(form)
+    const clean = Object.fromEntries(Object.entries(form).filter(([, v]) => v !== "" && v !== undefined))
+    const f = await createFollowUp(clean as CreateFollowUp)
     setItems([...items, f])
-    setForm({ customer_id: "", type: "call", scheduled_at: "" })
+    setForm({ type: "call", scheduled_at: "" })
     setShowForm(false)
   }
 
@@ -50,10 +51,6 @@ export default function FollowUps() {
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6 space-y-4">
           <h3 className="font-semibold text-slate-800">Schedule Follow-up</h3>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Customer ID *</label>
-              <input className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" value={form.customer_id} onChange={(e) => setForm({ ...form, customer_id: e.target.value })} required />
-            </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Type</label>
               <select className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
@@ -89,7 +86,7 @@ export default function FollowUps() {
                 </div>
                 <p className="text-sm text-slate-600 mt-0.5">{new Date(f.scheduled_at).toLocaleString()}</p>
                 {f.notes && <p className="text-xs text-slate-500 mt-0.5">{f.notes}</p>}
-                <p className="text-xs text-slate-400 mt-0.5">Customer: {f.customer_id.slice(0, 8)}</p>
+                {f.customer_id && <p className="text-xs text-slate-400 mt-0.5">Customer: {f.customer_id.slice(0, 8)}</p>}
               </div>
             </div>
             <button onClick={() => handleComplete(f.id)} className="text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors border border-green-200">Mark Done</button>
