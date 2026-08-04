@@ -29,3 +29,8 @@ Cargo.lock
 
 # Logs
 *.log
+
+# Database files (runtime data, not source)
+*.db
+*.db-shm
+*.db-wal
