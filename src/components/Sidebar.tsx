@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom"
+import logo from "../assets/logo.png"
 
 const links = [
   { to: "/", label: "Dashboard", icon: "📊" },
@@ -11,9 +12,12 @@ const links = [
 export default function Sidebar() {
   return (
     <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0">
-      <div className="p-5 border-b border-slate-800">
-        <h1 className="text-lg font-bold tracking-tight">Victor</h1>
-        <p className="text-xs text-slate-500 mt-0.5">Business Manager</p>
+      <div className="p-5 border-b border-slate-800 flex items-center gap-3">
+        <img src={logo} alt="Godgrace Furniture" className="w-10 h-10 rounded-lg object-cover bg-white" />
+        <div>
+          <h1 className="text-sm font-bold tracking-tight leading-tight">Godgrace Furniture</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Business Manager</p>
+        </div>
       </div>
       <nav className="flex-1 p-3 space-y-1">
         {links.map((l) => (
